@@ -9,7 +9,7 @@ To simplify the problem, we will focus on the accounts of Emma Frost, BankID = 3
 
 Below you'll find an image of the CUSTOMER DB:
 
-![CUSTOMER Relation](customer.png)
+<img width="727" alt="customer" src="https://user-images.githubusercontent.com/69999501/214090699-7f9bd074-55be-48c1-b148-42edbaf4d356.png">
 
 # **Transaction to be executed**
 Emma will be moving $100,000 from her checking account (312345C) to her Savings Account (312345S).
@@ -41,9 +41,9 @@ For your simulation, Emma's transaction is satisfactorily completed ONLY when bo
 
 Below the schemas for the ACCOUNT and ACCOUNT_BALANCE Relations (Tables):
 
-![ACCOUNT Relation](account.png)
+<img width="391" alt="account" src="https://user-images.githubusercontent.com/69999501/214090824-b40fab9a-1366-44c6-9cb4-75422da128a0.png">
 
-![ACCOUNT_BALANCE Relation](account_balance.png)
+<img width="286" alt="account_balance" src="https://user-images.githubusercontent.com/69999501/214090866-63c715c5-284a-4efc-a92d-d819237d6a2d.png">
 
 - COMMIT: as we know, a COMMIT is the signal we send to the RDBMS, telling it that a logical-transaction has been executed successfully. Hence, it is time to make the changes we've performed to the Database, persistent (save them to secondary storage).
 
@@ -77,7 +77,7 @@ You should print out the contents of your Logging & Rollback System as soon as a
 # **Proposed Architecture**
 The architecture for this "simulation" is as follows:
 
-![RDBMS Architecture](arch01.png)
+<img width="1517" alt="arch01" src="https://user-images.githubusercontent.com/69999501/214090919-9f90cf76-5651-43ee-ad02-66a8d5745b95.png">
 
 As you examine the diagram above, please consider the following:
 
