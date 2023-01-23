@@ -4,6 +4,7 @@ import pandas as pd
 
 
 def myreader(filename: str):
+    """ Read csv file and return a list of lists """
     with open(filename, newline='') as f:
         reader = csv.reader(f)
         your_list = list(reader)
@@ -12,6 +13,7 @@ def myreader(filename: str):
 
 
 def populate_dataframes():
+    """ Populate Dataframes with data from csv files (../Data-Assignment-1/csv/) """
     # Populate Dataframes
     customer_list = myreader('../Data-Assignment-1/csv/customer.csv')
     account_list = myreader('../Data-Assignment-1/csv/account.csv')
