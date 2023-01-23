@@ -1,4 +1,4 @@
-# Skeleton for commit and roll-back exercise    
+# Skeleton for commit and roll-back exercise
 
 # *** Your Code goes Here ***
 
@@ -23,7 +23,5 @@ def main():
     print("Must either AUTOMATICALLY Roll-back Database to a state of equilibrium (Bonus), OR\nSTOP Operations and show: (a) Log-Status, and (b) Databases Contents.\n")
     print("\nThe Log Sub-system contents should show the necessary operations needed to fix the situation!")
 
+
 main()
-
-
-
