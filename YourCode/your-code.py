@@ -1,6 +1,7 @@
 # Your Code
 import csv
 import pandas as pd
+from colored import fg, attr
 
 
 def myreader(filename: str):
@@ -38,6 +39,80 @@ def populate_dataframes():
         account_balances["Balance"].append(line[1])
 
 
+def print_dataframes():
+    """ Print Dataframes """
+    print("Customers Dataframe: \n \n", df_customers, "\n")
+    print("Accounts Dataframe: \n \n", df_accounts, "\n")
+    print("Account Balances Dataframe: \n \n", df_account_balances, "\n")
+
+
+def transaction_block_1(id, money):
+    """ Transaction Block 1: Successful """
+
+    # Get the customer information of the id
+    first_name = df_customers.loc[id, 'FirstName']
+    last_name = df_customers.loc[id, 'LastName']
+
+    # Get the account numbers of the id
+    from_account = df_accounts.loc[id, 'Checking Account']
+    to_account = df_accounts.loc[id, 'Saving Account']
+
+    # Get the account balances of the account numbers
+    from_account_balance = df_account_balances.loc[from_account, 'Balance']
+    to_account_balance = df_account_balances.loc[to_account, 'Balance']
+
+    print(f'{fg("green")}BLOCK TRANSACATION 1{attr("reset")}')
+
+    # Print the transaction information
+    print(f"{first_name} {last_name} will be moving ${money} from their checking account ({from_account}) to their Savings Account ({to_account}).")
+    print("Balances:")
+    print(f"  Checking: {from_account_balance}")
+    print(f"  Savings: {to_account_balance}")
+
+    # Subtract money from the checking account
+    print(f'{fg("green")}Subtract money from one account.{attr("reset")}')
+
+    df_account_balances.loc[from_account, 'Balance'] = int(
+        from_account_balance) - money
+
+    print(
+        f"Subtracted ${money} from {first_name} {last_name}'s Checking Account ({from_account}).")
+
+    # Add money to the savings account
+    print(f'{fg("green")}Add money to second one{attr("reset")}')
+
+    df_account_balances.loc[to_account, 'Balance'] = int(
+        to_account_balance) + money
+
+    print(
+        f"Added ${money} to {first_name} {last_name}'s Savings Account ({to_account}).")
+
+    # Commit the changes
+    print(f'{fg("green")}COMMIT all your changes{attr("reset")}')
+
+    df_account_balances.to_csv(
+        '../Data-Assignment-1/csv/account-balance.csv')
+
+    print("Changes committed to account-balance.csv")
+
+    # Print the Dataframes
+    # TODO for testing, currently only printing values, not whole Dataframes
+    print(f'{fg("green")}Print Contents of Databases{attr("reset")}')
+
+    # update the variables
+    from_account_balance = df_account_balances.loc[from_account, 'Balance']
+    to_account_balance = df_account_balances.loc[to_account, 'Balance']
+
+    print("Balances:")
+    print(f"  Checking: {from_account_balance}")
+    print(f"  Savings: {to_account_balance}")
+
+    # Print the Log Sub-system
+    print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
+
+    # TODO: Print the Log Sub-system
+
+
 # Dataframe will hold data from customer.csv
 customers = {
     "ID": [],
@@ -64,7 +139,7 @@ account_balances = {
 # Populate Dataframes
 populate_dataframes()
 
-# Create Dataframes
+# Instantiate Dataframes
 df_customers = pd.DataFrame(customers)
 df_accounts = pd.DataFrame(accounts)
 df_account_balances = pd.DataFrame(account_balances)
@@ -73,3 +148,11 @@ df_account_balances = pd.DataFrame(account_balances)
 df_customers.set_index('ID', inplace=True)
 df_accounts.set_index('ID', inplace=True)
 df_account_balances.set_index('AccountNum', inplace=True)
+
+# Print Dataframes
+print_dataframes()
+
+# This program only focuses on Emma Frost's account
+id = "3"
+
+transaction_block_1(id, 100000)
