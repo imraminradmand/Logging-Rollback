@@ -63,3 +63,13 @@ account_balances = {
 
 # Populate Dataframes
 populate_dataframes()
+
+# Create Dataframes
+df_customers = pd.DataFrame(customers)
+df_accounts = pd.DataFrame(accounts)
+df_account_balances = pd.DataFrame(account_balances)
+
+# Set the indexes of the Dataframes to the keys of the tables
+df_customers.set_index('ID', inplace=True)
+df_accounts.set_index('ID', inplace=True)
+df_account_balances.set_index('AccountNum', inplace=True)
