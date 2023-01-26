@@ -105,8 +105,10 @@ def transaction_block(id:str, money:int, faliure:bool):
     
     # Transaction Faliure    
     if (faliure == True):
+        # TODO: COMMIT CHEQUING REDUCTION TO DB. - per instructions
+
         print(f'{fg("red")}Faliure{attr("reset")}')
-         # LOG
+        # LOG
         log.append(df_account_balances)
         log.append('Failed')
         log.append(timestamp) 
