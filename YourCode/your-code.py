@@ -51,11 +51,7 @@ def print_dataframes():
     print(f'{fg("orange_1")}Account Balances Dataframe:{attr("reset")}' "\n",
           df_account_balances)
 
-def first_output():
-    """ First Output: Print Original Contents of Databases """
-
-    print(f'{fg("green")}First Output:{attr("reset")}')
-
+def output():
     # Print the Dataframes
     print(f'{fg("green")}Print Original Contents of Databases:{attr("reset")}')
 
@@ -66,7 +62,6 @@ def first_output():
     print(log)
 
 def transaction_block(id:str, money:int, faliure:bool):
-    """ Transaction Block 1: Successful """
     # Create timestamp
     timestamp = datetime.datetime.now()
 
@@ -164,12 +159,13 @@ def transaction_block(id:str, money:int, faliure:bool):
 
 def auto_rollback():
     print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
+    # Getting before image from the log and converting to df
     previous_image = pd.DataFrame(log[3])
     previous_image.set_index('AccountNum', inplace=True)
     previous_image.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
-    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}', "\n", previous_image)
     print(f'{fg("green")}ROLLBACK COMPLETED{attr("reset")}')
+    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}', "\n", previous_image)
 
 def print_log():
     print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[0]}', 
@@ -227,9 +223,19 @@ df_account_balances.set_index('AccountNum', inplace=True)
 def main():
     # This program only focuses on Emma Frost's account
     id = "3"
-    first_output()
-    # transaction_block(id, 100000, False)
-    transaction_block(id, 100000, True)
+    res = input('\033[1mEnter 1 for sucessful transaction OR 2 for faliure OR "q" to exit: \033[0m')
+    if res == '1':
+        output()
+        transaction_block(id, 100000, False)
+    elif res == '2':
+        output()
+        transaction_block(id, 100000, True)
+    elif res == 'q':
+        print("Exiting...")
+        exit()
+    else:
+        print("Invalid input")
+        main()
 
 if __name__ == "__main__":
     main()
