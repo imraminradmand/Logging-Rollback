@@ -65,10 +65,7 @@ def first_output():
 
     # Print the Log Sub-system
     print(f'{fg("green")}Print current status of Log Sub-system:{attr("reset")}')
-    print("TODO: Print the Log Sub-system\n")
-
-    # TODO: Print the Log Sub-system
-
+    print(log)
 
 def transaction_block_1(id, money):
     """ Transaction Block 1: Successful """
@@ -137,7 +134,6 @@ def transaction_block_1(id, money):
     print("Changes committed to account-balance.csv")
 
     # Print the Dataframes
-    # TODO for testing, currently only printing values, not whole Dataframes
     print(f'{fg("green")}Print Contents of Databases{attr("reset")}')
 
     # update the variables
@@ -163,8 +159,6 @@ def transaction_block_1(id, money):
     f'{fg("orange_1")}Timestamp: {attr("reset")}{log[6]}', "\n", 
     f'{fg("orange_1")}User: {attr("reset")}{log[7]}', "\n")
     
-
-# 
 
 # Dataframe will hold data from customer.csv
 customers = {
