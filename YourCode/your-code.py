@@ -179,6 +179,10 @@ df_account_balances.set_index('AccountNum', inplace=True)
 id = "3"
 
 
-first_output()
 
-transaction_block_1(id, 100000)
+def main():
+    first_output()
+    transaction_block_1(id, 100000)
+
+if __name__ == "__main__":
+    main()
