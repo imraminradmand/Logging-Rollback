@@ -17,7 +17,6 @@ def myreader(filename: str):
 
     return (your_list)
 
-
 def populate_dataframes():
     """ Populate Dataframes with data from csv files (../Data-Assignment-1/csv/) """
     # Populate Dataframes
@@ -52,7 +51,6 @@ def print_dataframes():
     print(f'{fg("orange_1")}Account Balances Dataframe:{attr("reset")}' "\n",
           df_account_balances)
 
-
 def first_output():
     """ First Output: Print Original Contents of Databases """
 
@@ -67,7 +65,7 @@ def first_output():
     print(f'{fg("green")}Print current status of Log Sub-system:{attr("reset")}')
     print(log)
 
-def transaction_block_1(id, money):
+def transaction_block(id:str, money:int, faliure:bool):
     """ Transaction Block 1: Successful """
     # Create timestamp
     timestamp = datetime.datetime.now()
@@ -109,7 +107,21 @@ def transaction_block_1(id, money):
 
     print(
         f"Subtracted ${money} from {first_name} {last_name}'s Checking Account ({from_account}).")
+    
+    # Transaction Faliure    
+    if (faliure == True):
+        print(f'{fg("red")}Faliure{attr("reset")}')
+         # LOG
+        log.append(df_account_balances)
+        log.append('Failed')
+        log.append(timestamp) 
+        log.append('Emma')
 
+        print_log()
+        auto_rollback()
+        logs = []
+        return
+    
     # Add money to the savings account
     print(f'{fg("green")}Add money to second one{attr("reset")}')
 
@@ -146,8 +158,20 @@ def transaction_block_1(id, money):
 
     # Print the Log Sub-system
     print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
+    print_log()
+    # Clear logs
+    logs = []
 
+def auto_rollback():
+    print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
+    previous_image = pd.DataFrame(log[3])
+    previous_image.set_index('AccountNum', inplace=True)
+    previous_image.to_csv(
+        '../Data-Assignment-1/csv/account-balance.csv', header=False)
+    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}', "\n", previous_image)
+    print(f'{fg("green")}ROLLBACK COMPLETED{attr("reset")}')
 
+def print_log():
     print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[0]}', 
     "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[1]}', 
     "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[2]}', "\n", 
@@ -158,8 +182,10 @@ def transaction_block_1(id, money):
     f'{fg("orange_1")}Status: {attr("reset")}{log[5]}', "\n", 
     f'{fg("orange_1")}Timestamp: {attr("reset")}{log[6]}', "\n", 
     f'{fg("orange_1")}User: {attr("reset")}{log[7]}', "\n")
-    
 
+#######################################
+############## DATAFRAMES #############
+#######################################
 # Dataframe will hold data from customer.csv
 customers = {
     "ID": [],
@@ -198,14 +224,12 @@ df_customers.set_index('ID', inplace=True)
 df_accounts.set_index('ID', inplace=True)
 df_account_balances.set_index('AccountNum', inplace=True)
 
-# This program only focuses on Emma Frost's account
-id = "3"
-
-
-
 def main():
+    # This program only focuses on Emma Frost's account
+    id = "3"
     first_output()
-    transaction_block_1(id, 100000)
+    # transaction_block(id, 100000, False)
+    transaction_block(id, 100000, True)
 
 if __name__ == "__main__":
     main()
