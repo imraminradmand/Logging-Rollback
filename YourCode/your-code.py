@@ -2,10 +2,12 @@
 import os
 import csv
 import pandas as pd
+import datetime
 from colored import fg, attr
 
 # Setup relative paths
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+log = []
 
 def myreader(filename: str):
     """ Read csv file and return a list of lists """
@@ -41,7 +43,6 @@ def populate_dataframes():
         account_balances["AccountNum"].append(line[0])
         account_balances["Balance"].append(line[1])
 
-
 def print_dataframes():
     """ Print Dataframes """
     print(f'{fg("orange_1")}Customers Dataframe:{attr("reset")}' "\n",
@@ -71,6 +72,17 @@ def first_output():
 
 def transaction_block_1(id, money):
     """ Transaction Block 1: Successful """
+    # Create timestamp
+    timestamp = datetime.datetime.now()
+
+    # Create Transaction ID
+    transaction_id = f"{timestamp.year}{timestamp.month}{timestamp.day}{timestamp.hour}{timestamp.minute}{timestamp.second}"
+
+    # LOG
+    log.append(transaction_id)
+    log.append('account-balance.csv')
+    log.append("balance")
+    log.append(account_balances)
 
     # Get the customer information of the id
     first_name = df_customers.loc[id, 'FirstName']
@@ -110,6 +122,12 @@ def transaction_block_1(id, money):
     print(
         f"Added ${money} to {first_name} {last_name}'s Savings Account ({to_account}).")
 
+    # LOG
+    log.append(df_account_balances)
+    log.append('completed')
+    log.append(timestamp) 
+    log.append('Emma')
+
     # Commit the changes
     print(f'{fg("green")}COMMIT all your changes{attr("reset")}')
 
@@ -133,9 +151,20 @@ def transaction_block_1(id, money):
     # Print the Log Sub-system
     print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
 
-    # TODO: Print the Log Sub-system
-    print("TODO: Print the Log Sub-system\n")
 
+    print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[0]}', 
+    "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[1]}', 
+    "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[2]}', "\n", 
+    f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n", 
+    f'{pd.DataFrame(log[3]).to_string(index=False)}', "\n", 
+    f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n", 
+    f'{pd.DataFrame(log[4])}', "\n", 
+    f'{fg("orange_1")}Status: {attr("reset")}{log[5]}', "\n", 
+    f'{fg("orange_1")}Timestamp: {attr("reset")}{log[6]}', "\n", 
+    f'{fg("orange_1")}User: {attr("reset")}{log[7]}', "\n")
+    
+
+# 
 
 # Dataframe will hold data from customer.csv
 customers = {
