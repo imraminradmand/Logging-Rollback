@@ -41,9 +41,29 @@ def populate_dataframes():
 
 def print_dataframes():
     """ Print Dataframes """
-    print("Customers Dataframe: \n \n", df_customers, "\n")
-    print("Accounts Dataframe: \n \n", df_accounts, "\n")
-    print("Account Balances Dataframe: \n \n", df_account_balances, "\n")
+    print(f'{fg("orange_1")}Customers Dataframe:{attr("reset")}' "\n",
+          df_customers, "\n")
+    print(f'{fg("orange_1")}Accounts Dataframe:{attr("reset")}' "\n",
+          df_accounts, "\n")
+    print(f'{fg("orange_1")}Account Balances Dataframe:{attr("reset")}' "\n",
+          df_account_balances)
+
+
+def first_output():
+    """ First Output: Print Original Contents of Databases """
+
+    print(f'{fg("green")}First Output:{attr("reset")}')
+
+    # Print the Dataframes
+    print(f'{fg("green")}Print Original Contents of Databases:{attr("reset")}')
+
+    print_dataframes()
+
+    # Print the Log Sub-system
+    print(f'{fg("green")}Print current status of Log Sub-system:{attr("reset")}')
+    print("TODO: Print the Log Sub-system\n")
+
+    # TODO: Print the Log Sub-system
 
 
 def transaction_block_1(id, money):
@@ -91,7 +111,7 @@ def transaction_block_1(id, money):
     print(f'{fg("green")}COMMIT all your changes{attr("reset")}')
 
     df_account_balances.to_csv(
-        '../Data-Assignment-1/csv/account-balance.csv')
+        '../Data-Assignment-1/csv/account-balance.csv', header=False)
 
     print("Changes committed to account-balance.csv")
 
@@ -111,6 +131,7 @@ def transaction_block_1(id, money):
     print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
 
     # TODO: Print the Log Sub-system
+    print("TODO: Print the Log Sub-system\n")
 
 
 # Dataframe will hold data from customer.csv
@@ -121,6 +142,8 @@ customers = {
     "Address": [],
     "City": [],
     "Age": [],
+
+
 }
 
 # Dataframe will hold data from account.csv
@@ -149,10 +172,10 @@ df_customers.set_index('ID', inplace=True)
 df_accounts.set_index('ID', inplace=True)
 df_account_balances.set_index('AccountNum', inplace=True)
 
-# Print Dataframes
-print_dataframes()
-
 # This program only focuses on Emma Frost's account
 id = "3"
+
+
+first_output()
 
 transaction_block_1(id, 100000)
