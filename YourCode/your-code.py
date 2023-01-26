@@ -1,8 +1,11 @@
 # Your Code
+import os
 import csv
 import pandas as pd
 from colored import fg, attr
 
+# Setup relative paths
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def myreader(filename: str):
     """ Read csv file and return a list of lists """
