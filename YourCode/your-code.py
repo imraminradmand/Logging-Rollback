@@ -105,7 +105,9 @@ def transaction_block(id:str, money:int, faliure:bool):
     
     # Transaction Faliure    
     if (faliure == True):
-        # TODO: COMMIT CHEQUING REDUCTION TO DB. - per instructions
+        # Commit removal of money from the checking account
+        df_account_balances.to_csv(
+        '../Data-Assignment-1/csv/account-balance.csv', header=False)
 
         print(f'{fg("red")}Faliure{attr("reset")}')
         # LOG
