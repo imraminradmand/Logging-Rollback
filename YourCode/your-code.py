@@ -160,7 +160,29 @@ def transaction_block(id:str, money:int, faliure:bool):
     print_log()
     # Clear logs
     logs = []
+"""
 
+initial logs = []
+
+in trans. 1 =>
+trans1LogList = [id, table, attr, imgB, imgA, completed, timestamp, userID]
+
+after trans.1 => 
+add trans1LogList to logs
+logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
+
+before trans.2 start =>
+logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
+
+during trans. 2 => 
+trans2LogList = [id2, table, attr, imgB, imgA, failed, timestamp, userID]
+
+after trans2 =>
+logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID],  [id2, table, attr, imgB, imgA, failed, timestamp, userID] ]
+
+look inside log for list that has status set to failed, grab that log, and then grab the before image from that log and use it for auto rollback
+
+"""
 def auto_rollback():
     print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
     # Getting before image from the log and converting to df
