@@ -161,8 +161,9 @@ def transaction_block(id:str, money:int, faliure:bool):
     # Clear logs
     logs = []
 """
+AUTO ROLLBACK + LOG STRUCTURE 
 
-initial logs = []
+initial (before anything happens) logs = []
 
 in trans. 1 =>
 trans1LogList = [id, table, attr, imgB, imgA, completed, timestamp, userID]
