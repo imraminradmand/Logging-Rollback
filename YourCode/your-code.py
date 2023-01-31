@@ -62,6 +62,7 @@ def output():
     print(log)
 
 def transaction_block(id:str, money:int, faliure:bool):
+    logList = []
     # Create timestamp
     timestamp = datetime.datetime.now()
 
@@ -69,10 +70,10 @@ def transaction_block(id:str, money:int, faliure:bool):
     transaction_id = f"{timestamp.year}{timestamp.month}{timestamp.day}{timestamp.hour}{timestamp.minute}{timestamp.second}"
 
     # LOG
-    log.append(transaction_id)
-    log.append('account-balance.csv')
-    log.append("balance")
-    log.append(account_balances)
+    logList.append(transaction_id)
+    logList.append('account-balance.csv')
+    logList.append("balance")
+    logList.append(account_balances)
 
     # Get the customer information of the id
     first_name = df_customers.loc[id, 'FirstName']
@@ -111,10 +112,11 @@ def transaction_block(id:str, money:int, faliure:bool):
 
         print(f'{fg("red")}Faliure{attr("reset")}')
         # LOG
-        log.append(df_account_balances)
-        log.append('Failed')
-        log.append(timestamp) 
-        log.append('Emma')
+        logList.append(df_account_balances)
+        logList.append('Failed')
+        logList.append(timestamp) 
+        logList.append('Emma')
+        log.append(logList)
 
         print_log()
         auto_rollback()
@@ -131,10 +133,11 @@ def transaction_block(id:str, money:int, faliure:bool):
         f"Added ${money} to {first_name} {last_name}'s Savings Account ({to_account}).")
 
     # LOG
-    log.append(df_account_balances)
-    log.append('completed')
-    log.append(timestamp) 
-    log.append('Emma')
+    logList.append(df_account_balances)
+    logList.append('completed')
+    logList.append(timestamp) 
+    logList.append('Emma')
+    log.append(logList)
 
     # Commit the changes
     print(f'{fg("green")}COMMIT all your changes{attr("reset")}')
@@ -159,7 +162,6 @@ def transaction_block(id:str, money:int, faliure:bool):
     print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
     print_log()
     # Clear logs
-    logs = []
 """
 AUTO ROLLBACK + LOG STRUCTURE 
 
@@ -187,7 +189,9 @@ look inside log for list that has status set to failed, grab that log, and then 
 def auto_rollback():
     print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
     # Getting before image from the log and converting to df
-    previous_image = pd.DataFrame(log[3])
+    elem = [i for i in log if i[5] == 'Failed']
+    # print(elem)
+    previous_image = pd.DataFrame(elem[0][3])
     previous_image.set_index('AccountNum', inplace=True)
     previous_image.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
@@ -195,16 +199,18 @@ def auto_rollback():
     print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}', "\n", previous_image)
 
 def print_log():
-    print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[0]}', 
-    "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[1]}', 
-    "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[2]}', "\n", 
-    f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n", 
-    f'{pd.DataFrame(log[3]).to_string(index=False)}', "\n", 
-    f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n", 
-    f'{pd.DataFrame(log[4])}', "\n", 
-    f'{fg("orange_1")}Status: {attr("reset")}{log[5]}', "\n", 
-    f'{fg("orange_1")}Timestamp: {attr("reset")}{log[6]}', "\n", 
-    f'{fg("orange_1")}User: {attr("reset")}{log[7]}', "\n")
+    for i in range(len(log)):
+        print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[i][0]}', 
+        "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[i][1]}', 
+        "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[i][2]}', "\n", 
+        f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n", 
+        f'{pd.DataFrame(log[i][3]).to_string(index=False)}', "\n", 
+        f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n", 
+        f'{pd.DataFrame(log[i][4])}', "\n", 
+        f'{fg("orange_1")}Status: {attr("reset")}{log[i][5]}', "\n", 
+        f'{fg("orange_1")}Timestamp: {attr("reset")}{log[i][6]}', "\n", 
+        f'{fg("orange_1")}User: {attr("reset")}{log[i][7]}', "\n")
+        print("---------------------------------------------------------")
 
 #######################################
 ############## DATAFRAMES #############
@@ -250,19 +256,21 @@ df_account_balances.set_index('AccountNum', inplace=True)
 def main():
     # This program only focuses on Emma Frost's account
     id = "3"
-    res = input('\033[1mEnter 1 for sucessful transaction OR 2 for faliure OR "q" to exit: \033[0m')
-    if res == '1':
-        output()
-        transaction_block(id, 100000, False)
-    elif res == '2':
-        output()
-        transaction_block(id, 100000, True)
-    elif res == 'q':
-        print("Exiting...")
-        exit()
-    else:
-        print("Invalid input")
-        main()
+    # res = input('\033[1mEnter 1 for sucessful transaction OR 2 for faliure OR "q" to exit: \033[0m')
+    # if res == '1':
+    #     output()
+    #     transaction_block(id, 100000, False)
+    # elif res == '2':
+    #     output()
+    #     transaction_block(id, 100000, True)
+    # elif res == 'q':
+    #     print("Exiting...")
+    #     exit()
+    # else:
+    #     print("Invalid input")
+    #     main()
+    # transaction_block(id, 100000, False)
+    transaction_block(id, 100000, True)
 
 if __name__ == "__main__":
     main()
