@@ -1,88 +1,42 @@
-# Your Code
-import os
-import csv
-import pandas as pd
 import datetime
-from colored import fg, attr
+import os
+
+import pandas as pd
+from colored import attr, fg
+from constant import ID
+from df_helpers import instantiate_dataframes, print_dataframes
+from helpers import color_print
 
 # Setup relative paths
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
+
+# Log Sub-system (Persistent, not cleared after each block)
 log = []
 
-
-def myreader(filename: str):
-    """ Read csv file and return a list of lists """
-    with open(filename, newline='') as f:
-        reader = csv.reader(f)
-        your_list = list(reader)
-
-    return (your_list)
-
-
-def populate_dataframes():
-    """ Populate Dataframes with data from csv files (../Data-Assignment-1/csv/) """
-    # Populate Dataframes
-    customer_list = myreader('../Data-Assignment-1/csv/customer.csv')
-    account_list = myreader('../Data-Assignment-1/csv/account.csv')
-    account_balance_list = myreader(
-        '../Data-Assignment-1/csv/account-balance.csv')
-
-    for line in customer_list:
-        customers["ID"].append(line[0])
-        customers["LastName"].append(line[1])
-        customers["FirstName"].append(line[2])
-        customers["Address"].append(line[3])
-        customers["City"].append(line[4])
-        customers["Age"].append(line[5])
-
-    for line in account_list:
-        accounts["ID"].append(line[0])
-        accounts["Checking Account"].append(line[1])
-        accounts["Saving Account"].append(line[2])
-
-    for line in account_balance_list:
-        account_balances["AccountNum"].append(line[0])
-        account_balances["Balance"].append(line[1])
-
-
-def print_dataframes():
-    """ Print Dataframes """
-    print(f'{fg("orange_1")}Customers Dataframe:{attr("reset")}' "\n",
-          df_customers, "\n")
-    print(f'{fg("orange_1")}Accounts Dataframe:{attr("reset")}' "\n",
-          df_accounts, "\n")
-    print(f'{fg("orange_1")}Account Balances Dataframe:{attr("reset")}' "\n",
-          df_account_balances)
-
-
-def output():
-    # Print the Dataframes
-    print(f'{fg("green")}Print Original Contents of Databases:{attr("reset")}')
-
-    print_dataframes()
-
-    # Print the Log Sub-system
-    print(f'{fg("green")}Print current status of Log Sub-system:{attr("reset")}')
-    print(log)
+# Instantiate the Dataframes
+df_customers, df_accounts, df_account_balances = instantiate_dataframes()
 
 
 def transaction_block(id: str, money: int, faliure: bool):
-    logList = []
+    # Create a list to log the current block
+    current_block_log = []
+
     # Create timestamp
     timestamp = datetime.datetime.now()
 
-    # Create Transaction ID
+    # Create Transaction ID (YYYYMMDDHHMMSS)
     transaction_id = f"{timestamp.year}{timestamp.month}{timestamp.day}{timestamp.hour}{timestamp.minute}{timestamp.second}"
 
-    # LOG
-    logList.append(transaction_id)
-    logList.append('account-balance.csv')
-    logList.append("balance")
-    logList.append(account_balances)
+    # Log the data onto the current block log
+    # * BEFORE THE TRANSACTION
+    current_block_log.append(transaction_id)
+    current_block_log.append('account_balance')
+    current_block_log.append("Balance")
+    current_block_log.append(df_account_balances)
 
     # Get the customer information of the id
-    first_name = df_customers.loc[id, 'FirstName']
-    last_name = df_customers.loc[id, 'LastName']
+    first_name = df_customers.loc[id, 'First Name']
+    last_name = df_customers.loc[id, 'Last Name']
 
     # Get the account numbers of the id
     from_account = df_accounts.loc[id, 'Checking Account']
@@ -92,16 +46,16 @@ def transaction_block(id: str, money: int, faliure: bool):
     from_account_balance = df_account_balances.loc[from_account, 'Balance']
     to_account_balance = df_account_balances.loc[to_account, 'Balance']
 
-    print(f'{fg("green")}BLOCK TRANSACATION 1{attr("reset")}')
-
     # Print the transaction information
     print(f"{first_name} {last_name} will be moving ${money} from their checking account ({from_account}) to their Savings Account ({to_account}).")
-    print("Balances:")
+
+    # TODO - Ask if we can leave like this since it asks for all tables
+    print(f"Balances:")
     print(f"  Checking: {from_account_balance}")
     print(f"  Savings: {to_account_balance}")
 
     # Subtract money from the checking account
-    print(f'{fg("green")}Subtract money from one account.{attr("reset")}')
+    color_print("Subtract money from one account.", "green")
 
     df_account_balances.loc[from_account, 'Balance'] = int(
         from_account_balance) - money
@@ -109,27 +63,36 @@ def transaction_block(id: str, money: int, faliure: bool):
     print(
         f"Subtracted ${money} from {first_name} {last_name}'s Checking Account ({from_account}).")
 
-    # Transaction Faliure
+    # Handle a transaction failure
     if (faliure == True):
         # Commit removal of money from the checking account
         df_account_balances.to_csv(
             '../Data-Assignment-1/csv/account-balance.csv', header=False)
 
-        print(f'{fg("red")}Faliure{attr("reset")}')
-        # LOG
-        logList.append(df_account_balances)
-        logList.append('Failed')
-        logList.append(timestamp)
-        logList.append('Emma')
-        log.append(logList)
+        color_print("Failure Detected", "red")
 
+        # Log the data onto the current block log
+        # * ERROR DURING TRANSACTION
+        current_block_log.append(df_account_balances)
+        current_block_log.append('Failed')
+        current_block_log.append(timestamp)
+        current_block_log.append('Emma')
+
+        # Append the current block log to the log sub-system
+        log.append(current_block_log)
+
+        # Print the log sub-system
         print_log()
-        auto_rollback()
-        logs = []
+
+        # TODO Auto rollback
+        # auto_rollback()
+
+        # Reset the current block log
+        current_block_log = []
         return
 
     # Add money to the savings account
-    print(f'{fg("green")}Add money to second one{attr("reset")}')
+    color_print("Add money to another account.", "green")
 
     df_account_balances.loc[to_account, 'Balance'] = int(
         to_account_balance) + money
@@ -137,55 +100,61 @@ def transaction_block(id: str, money: int, faliure: bool):
     print(
         f"Added ${money} to {first_name} {last_name}'s Savings Account ({to_account}).")
 
-    # LOG
-    logList.append(df_account_balances)
-    logList.append('completed')
-    logList.append(timestamp)
-    logList.append('Emma')
-    log.append(logList)
+    # Log the data onto the current block log
+    # * AFTER THE TRANSACTION
+    current_block_log.append(df_account_balances)
+    current_block_log.append('completed')
+    current_block_log.append(timestamp)
+    current_block_log.append('Emma')
+
+    # Append the current block log to the log sub-system
+    log.append(current_block_log)
 
     # Commit the changes
-    print(f'{fg("green")}COMMIT all your changes{attr("reset")}')
+    color_print("COMMIT all your changes", "green")
 
     df_account_balances.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
 
     print("Changes committed to account-balance.csv")
 
-    # Print the Dataframes
-    print(f'{fg("green")}Print Contents of Databases{attr("reset")}')
-
     # update the variables
     from_account_balance = df_account_balances.loc[from_account, 'Balance']
     to_account_balance = df_account_balances.loc[to_account, 'Balance']
 
-    print("Balances:")
+    # Print the Dataframes
+    color_print("Contents of Databases", "green")
+
+    # TODO - Ask if we can leave like this since it asks for all tables
+    print(f"Balances:")
     print(f"  Checking: {from_account_balance}")
     print(f"  Savings: {to_account_balance}")
 
     # Print the Log Sub-system
-    print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
+    color_print("Status of Log Sub-system:", "green")
     print_log()
 
+    # Clear log
+    # TODO clear log - crashing for some reason
 
-    # Clear logs
+
 """
 AUTO ROLLBACK + LOG STRUCTURE
 
 initial (before anything happens) logs = []
 
 in trans. 1 =>
-trans1LogList = [id, table, attr, imgB, imgA, completed, timestamp, userID]
+trans1current_block_log = [id, table, attr, imgB, imgA, completed, timestamp, userID]
 
 after trans.1 =>
-add trans1LogList to logs
+add trans1current_block_log to logs
 logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
 
 before trans.2 start =>
 logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
 
 during trans. 2 =>
-trans2LogList = [id2, table, attr, imgB, imgA, failed, timestamp, userID]
+trans2current_block_log = [id2, table, attr, imgB, imgA, failed, timestamp, userID]
 
 after trans2 =>
 logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID],  [id2, table, attr, imgB, imgA, failed, timestamp, userID] ]
@@ -201,7 +170,7 @@ def auto_rollback():
     elem = [i for i in log if i[5] == 'Failed']
     # print(elem)
     previous_image = pd.DataFrame(elem[0][3])
-    previous_image.set_index('AccountNum', inplace=True)
+    previous_image.set_index('Account Number', inplace=True)
     previous_image.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
     print(f'{fg("green")}ROLLBACK COMPLETED{attr("reset")}')
@@ -210,12 +179,15 @@ def auto_rollback():
 
 
 def print_log():
+    if len(log) == 0:
+        print("Log Sub-system is empty", "\n")
+
     for i in range(len(log)):
         print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[i][0]}',
               "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[i][1]}',
-              "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[i][2]}', "\n",
+              "\n", f'{fg("orange_1")}Attribute: {attr("reset")}{log[i][2]}', "\n",
               f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n",
-              f'{pd.DataFrame(log[i][3]).to_string(index=False)}', "\n",
+              f'{pd.DataFrame(log[i][3])}', "\n",
               f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n",
               f'{pd.DataFrame(log[i][4])}', "\n",
               f'{fg("orange_1")}Status: {attr("reset")}{log[i][5]}', "\n",
@@ -224,66 +196,20 @@ def print_log():
         print("---------------------------------------------------------")
 
 
-#######################################
-############## DATAFRAMES #############
-#######################################
-# Dataframe will hold data from customer.csv
-customers = {
-    "ID": [],
-    "LastName": [],
-    "FirstName": [],
-    "Address": [],
-    "City": [],
-    "Age": [],
-
-
-}
-
-# Dataframe will hold data from account.csv
-accounts = {
-    "ID": [],
-    "Checking Account": [],
-    "Saving Account": [],
-}
-
-# Dataframe will hold data from account-balance.csv
-account_balances = {
-    "AccountNum": [],
-    "Balance": [],
-}
-
-# Populate Dataframes
-populate_dataframes()
-
-# Instantiate Dataframes
-df_customers = pd.DataFrame(customers)
-df_accounts = pd.DataFrame(accounts)
-df_account_balances = pd.DataFrame(account_balances)
-
-# Set the indexes of the Dataframes to the keys of the tables
-df_customers.set_index('ID', inplace=True)
-df_accounts.set_index('ID', inplace=True)
-df_account_balances.set_index('AccountNum', inplace=True)
-
-
 def main():
-    # This program only focuses on Emma Frost's account
-    id = "3"
-    # res = input('\033[1mEnter 1 for sucessful transaction OR 2 for faliure OR "q" to exit: \033[0m')
-    # if res == '1':
-    #     output()
-    #     transaction_block(id, 100000, False)
-    # elif res == '2':
-    #     output()
-    #     transaction_block(id, 100000, True)
-    # elif res == 'q':
-    #     print("Exiting...")
-    #     exit()
-    # else:
-    #     print("Invalid input")
-    #     main()
-    # transaction_block(id, 100000, False)
-    transaction_block(id, 100000, True)
+    color_print("First Output:", 'blue')
+
+    color_print("Original Contents of Databases:", 'blue')
+    print_dataframes(df_customers, df_accounts, df_account_balances)
+
+    color_print("Original Contents of Log Sub-system:", 'blue')
+    print_log()
+
+    color_print("BLOCK TRANSACTION 1", 'green')
+    transaction_block(ID, 100000, False)
+
+    # color_print("BLOCK TRANSACTION 2", 'green')
+    # transaction_block(ID, 100000, True)
 
 
 if __name__ == "__main__":
