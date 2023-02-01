@@ -5,13 +5,13 @@ import pandas as pd
 from colored import attr, fg
 from constant import ID
 from df_helpers import instantiate_dataframes, print_dataframes
-from helpers import color_print
+from helpers import color_print, color_print_log
 
 # Setup relative paths
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Log Sub-system (Persistent, not cleared after each block)
-log = []
+log_list = []
 
 # Instantiate the Dataframes
 df_customers, df_accounts, df_account_balances = instantiate_dataframes()
@@ -19,20 +19,22 @@ df_customers, df_accounts, df_account_balances = instantiate_dataframes()
 
 def transaction_block(id: str, money: int, faliure: bool):
     # Create a list to log the current block
-    current_block_log = []
+    # current_block_log = []
+    current_block_log = {
+        "status": "",
+        "transaction_id": "",
+        "attribute": "",
+        "table": "",
+        "image_before": {},
+        "timestamp": "",
+        "user": "",
+    }
 
     # Create timestamp
     timestamp = datetime.datetime.now()
 
     # Create Transaction ID (YYYYMMDDHHMMSS)
     transaction_id = f"{timestamp.year}{timestamp.month}{timestamp.day}{timestamp.hour}{timestamp.minute}{timestamp.second}"
-
-    # Log the data onto the current block log
-    # * BEFORE THE TRANSACTION
-    current_block_log.append(transaction_id)
-    current_block_log.append('account_balance')
-    current_block_log.append("Balance")
-    current_block_log.append(df_account_balances)
 
     # Get the customer information of the id
     first_name = df_customers.loc[id, 'First Name']
@@ -45,6 +47,16 @@ def transaction_block(id: str, money: int, faliure: bool):
     # Get the account balances of the account numbers
     from_account_balance = df_account_balances.loc[from_account, 'Balance']
     to_account_balance = df_account_balances.loc[to_account, 'Balance']
+
+    # Log the data onto the current block log
+    # * BEFORE THE TRANSACTION
+    current_block_log["status"] = "Before Transaction"
+    current_block_log["transaction_id"] = transaction_id
+    current_block_log["attribute"] = "Balance"
+    current_block_log["table"] = "account-balance"
+    current_block_log["image_before"] = df_account_balances
+    current_block_log["timestamp"] = timestamp
+    current_block_log["user"] = f"{first_name} {last_name}"
 
     # Print the transaction information
     print(f"{first_name} {last_name} will be moving ${money} from their checking account ({from_account}) to their Savings Account ({to_account}).")
@@ -73,13 +85,16 @@ def transaction_block(id: str, money: int, faliure: bool):
 
         # Log the data onto the current block log
         # * ERROR DURING TRANSACTION
-        current_block_log.append(df_account_balances)
-        current_block_log.append('Failed')
-        current_block_log.append(timestamp)
-        current_block_log.append('Emma')
+        current_block_log["status"] = "Failure"
+        current_block_log["transaction_id"] = transaction_id
+        current_block_log["attribute"] = "Balance"
+        current_block_log["table"] = "account-balance"
+        current_block_log["image_before"] = df_account_balances
+        current_block_log["timestamp"] = timestamp
+        current_block_log["user"] = f"{first_name} {last_name}"
 
         # Append the current block log to the log sub-system
-        log.append(current_block_log)
+        log_list.append(current_block_log)
 
         # Print the log sub-system
         print_log()
@@ -88,7 +103,7 @@ def transaction_block(id: str, money: int, faliure: bool):
         # auto_rollback()
 
         # Reset the current block log
-        current_block_log = []
+        current_block_log = {}
         return
 
     # Add money to the savings account
@@ -102,13 +117,16 @@ def transaction_block(id: str, money: int, faliure: bool):
 
     # Log the data onto the current block log
     # * AFTER THE TRANSACTION
-    current_block_log.append(df_account_balances)
-    current_block_log.append('completed')
-    current_block_log.append(timestamp)
-    current_block_log.append('Emma')
+    current_block_log["status"] = "Success"
+    current_block_log["transaction_id"] = transaction_id
+    current_block_log["attribute"] = "Balance"
+    current_block_log["table"] = "account-balance"
+    current_block_log["image_before"] = df_account_balances
+    current_block_log["timestamp"] = timestamp
+    current_block_log["user"] = f"{first_name} {last_name}"
 
     # Append the current block log to the log sub-system
-    log.append(current_block_log)
+    log_list.append(current_block_log)
 
     # Commit the changes
     color_print("COMMIT all your changes", "green")
@@ -165,10 +183,10 @@ look inside log for list that has status set to failed, grab that log, and then 
 
 
 def auto_rollback():
-    print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
+    color_print("AUTO ROLLBACK INITIATED", "purple_1b")
+
     # Getting before image from the log and converting to df
     elem = [i for i in log if i[5] == 'Failed']
-    # print(elem)
     previous_image = pd.DataFrame(elem[0][3])
     previous_image.set_index('Account Number', inplace=True)
     previous_image.to_csv(
@@ -179,21 +197,14 @@ def auto_rollback():
 
 
 def print_log():
-    if len(log) == 0:
-        print("Log Sub-system is empty", "\n")
-
-    for i in range(len(log)):
-        print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[i][0]}',
-              "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[i][1]}',
-              "\n", f'{fg("orange_1")}Attribute: {attr("reset")}{log[i][2]}', "\n",
-              f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n",
-              f'{pd.DataFrame(log[i][3])}', "\n",
-              f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n",
-              f'{pd.DataFrame(log[i][4])}', "\n",
-              f'{fg("orange_1")}Status: {attr("reset")}{log[i][5]}', "\n",
-              f'{fg("orange_1")}Timestamp: {attr("reset")}{log[i][6]}', "\n",
-              f'{fg("orange_1")}User: {attr("reset")}{log[i][7]}', "\n")
-        print("---------------------------------------------------------")
+    for log in log_list:
+        color_print_log("Transaction ID:", "orange_1", log['transaction_id'])
+        color_print_log("Attribute:", "orange_1", log['attribute'])
+        color_print_log("Table:", "orange_1", log['table'])
+        color_print("Image Before:", "orange_1")
+        print(log['image_before'])
+        color_print_log("Timestamp:", "orange_1", log['timestamp'])
+        color_print_log("User:", "orange_1", log['user'])
 
 
 def main():

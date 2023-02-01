@@ -12,5 +12,9 @@ def myreader(filename: str):
     return (your_list)
 
 
-def color_print(text, color):
-    print(f'{fg(color)}{text}{attr("reset")}')
+def color_print(text1, color):
+    print(f'{fg(color)}{text1}{attr("reset")}')
+
+
+def color_print_log(header, color, text):
+    print(f'{fg(color)}{header:}{attr("reset")}', text)
