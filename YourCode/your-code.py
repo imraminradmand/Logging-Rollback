@@ -185,15 +185,20 @@ look inside log for list that has status set to failed, grab that log, and then 
 def auto_rollback():
     color_print("AUTO ROLLBACK INITIATED", "purple_1b")
 
+    # Getting the last log
+    log = log_list[-1]
+
     # Getting before image from the log and converting to df
-    elem = [i for i in log if i[5] == 'Failed']
-    previous_image = pd.DataFrame(elem[0][3])
+    previous_image = pd.DataFrame(log["image_before"])
     previous_image.set_index('Account Number', inplace=True)
+
+    # Commiting the fix
     previous_image.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
-    print(f'{fg("green")}ROLLBACK COMPLETED{attr("reset")}')
-    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}',
-          "\n", previous_image)
+
+    color_print("AUTO ROLLBACK COMPLETED", "purple_1b")
+
+    color_print_log("DB STATE AFTER ROLLBACK", "purple_1b", previous_image)
 
 
 def print_log():
@@ -223,8 +228,8 @@ def main():
     color_print("BLOCK TRANSACTION 1", 'green')
     transaction_block(ID, 100000, False)
 
-    # color_print("BLOCK TRANSACTION 2", 'green')
-    # transaction_block(ID, 100000, True)
+    color_print("BLOCK TRANSACTION 2", 'green')
+    transaction_block(ID, 100000, True)
 
 
 if __name__ == "__main__":
