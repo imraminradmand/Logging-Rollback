@@ -9,6 +9,7 @@ from colored import fg, attr
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 log = []
 
+
 def myreader(filename: str):
     """ Read csv file and return a list of lists """
     with open(filename, newline='') as f:
@@ -16,6 +17,7 @@ def myreader(filename: str):
         your_list = list(reader)
 
     return (your_list)
+
 
 def populate_dataframes():
     """ Populate Dataframes with data from csv files (../Data-Assignment-1/csv/) """
@@ -42,6 +44,7 @@ def populate_dataframes():
         account_balances["AccountNum"].append(line[0])
         account_balances["Balance"].append(line[1])
 
+
 def print_dataframes():
     """ Print Dataframes """
     print(f'{fg("orange_1")}Customers Dataframe:{attr("reset")}' "\n",
@@ -50,6 +53,7 @@ def print_dataframes():
           df_accounts, "\n")
     print(f'{fg("orange_1")}Account Balances Dataframe:{attr("reset")}' "\n",
           df_account_balances)
+
 
 def output():
     # Print the Dataframes
@@ -61,7 +65,8 @@ def output():
     print(f'{fg("green")}Print current status of Log Sub-system:{attr("reset")}')
     print(log)
 
-def transaction_block(id:str, money:int, faliure:bool):
+
+def transaction_block(id: str, money: int, faliure: bool):
     logList = []
     # Create timestamp
     timestamp = datetime.datetime.now()
@@ -103,18 +108,18 @@ def transaction_block(id:str, money:int, faliure:bool):
 
     print(
         f"Subtracted ${money} from {first_name} {last_name}'s Checking Account ({from_account}).")
-    
-    # Transaction Faliure    
+
+    # Transaction Faliure
     if (faliure == True):
         # Commit removal of money from the checking account
         df_account_balances.to_csv(
-        '../Data-Assignment-1/csv/account-balance.csv', header=False)
+            '../Data-Assignment-1/csv/account-balance.csv', header=False)
 
         print(f'{fg("red")}Faliure{attr("reset")}')
         # LOG
         logList.append(df_account_balances)
         logList.append('Failed')
-        logList.append(timestamp) 
+        logList.append(timestamp)
         logList.append('Emma')
         log.append(logList)
 
@@ -122,7 +127,7 @@ def transaction_block(id:str, money:int, faliure:bool):
         auto_rollback()
         logs = []
         return
-    
+
     # Add money to the savings account
     print(f'{fg("green")}Add money to second one{attr("reset")}')
 
@@ -135,7 +140,7 @@ def transaction_block(id:str, money:int, faliure:bool):
     # LOG
     logList.append(df_account_balances)
     logList.append('completed')
-    logList.append(timestamp) 
+    logList.append(timestamp)
     logList.append('Emma')
     log.append(logList)
 
@@ -161,23 +166,25 @@ def transaction_block(id:str, money:int, faliure:bool):
     # Print the Log Sub-system
     print(f'{fg("green")}Print current status of Log Sub-system{attr("reset")}')
     print_log()
+
+
     # Clear logs
 """
-AUTO ROLLBACK + LOG STRUCTURE 
+AUTO ROLLBACK + LOG STRUCTURE
 
 initial (before anything happens) logs = []
 
 in trans. 1 =>
 trans1LogList = [id, table, attr, imgB, imgA, completed, timestamp, userID]
 
-after trans.1 => 
+after trans.1 =>
 add trans1LogList to logs
 logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
 
 before trans.2 start =>
 logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
 
-during trans. 2 => 
+during trans. 2 =>
 trans2LogList = [id2, table, attr, imgB, imgA, failed, timestamp, userID]
 
 after trans2 =>
@@ -186,6 +193,8 @@ logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID],  [id2, table,
 look inside log for list that has status set to failed, grab that log, and then grab the before image from that log and use it for auto rollback
 
 """
+
+
 def auto_rollback():
     print(f'{fg("green")}AUTO ROLLBACK INITIATED...{attr("reset")}')
     # Getting before image from the log and converting to df
@@ -196,21 +205,24 @@ def auto_rollback():
     previous_image.to_csv(
         '../Data-Assignment-1/csv/account-balance.csv', header=False)
     print(f'{fg("green")}ROLLBACK COMPLETED{attr("reset")}')
-    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}', "\n", previous_image)
+    print(f'{fg("orange_1")}DB STATE AFTER ROLLBACK{attr("reset")}',
+          "\n", previous_image)
+
 
 def print_log():
     for i in range(len(log)):
-        print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[i][0]}', 
-        "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[i][1]}', 
-        "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[i][2]}', "\n", 
-        f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n", 
-        f'{pd.DataFrame(log[i][3]).to_string(index=False)}', "\n", 
-        f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n", 
-        f'{pd.DataFrame(log[i][4])}', "\n", 
-        f'{fg("orange_1")}Status: {attr("reset")}{log[i][5]}', "\n", 
-        f'{fg("orange_1")}Timestamp: {attr("reset")}{log[i][6]}', "\n", 
-        f'{fg("orange_1")}User: {attr("reset")}{log[i][7]}', "\n")
+        print(f'{fg("orange_1")}Transaction ID:{attr("reset")} {log[i][0]}',
+              "\n", f'{fg("orange_1")}Table: {attr("reset")}{log[i][1]}',
+              "\n", f'{fg("orange_1")}Arrtibute: {attr("reset")}{log[i][2]}', "\n",
+              f'{fg("orange_1")}IMAGE BEFORE {attr("reset")}' "\n",
+              f'{pd.DataFrame(log[i][3]).to_string(index=False)}', "\n",
+              f'{fg("orange_1")}IMAGE AFTER {attr("reset")}' "\n",
+              f'{pd.DataFrame(log[i][4])}', "\n",
+              f'{fg("orange_1")}Status: {attr("reset")}{log[i][5]}', "\n",
+              f'{fg("orange_1")}Timestamp: {attr("reset")}{log[i][6]}', "\n",
+              f'{fg("orange_1")}User: {attr("reset")}{log[i][7]}', "\n")
         print("---------------------------------------------------------")
+
 
 #######################################
 ############## DATAFRAMES #############
@@ -253,6 +265,7 @@ df_customers.set_index('ID', inplace=True)
 df_accounts.set_index('ID', inplace=True)
 df_account_balances.set_index('AccountNum', inplace=True)
 
+
 def main():
     # This program only focuses on Emma Frost's account
     id = "3"
@@ -271,6 +284,7 @@ def main():
     #     main()
     # transaction_block(id, 100000, False)
     transaction_block(id, 100000, True)
+
 
 if __name__ == "__main__":
     main()
