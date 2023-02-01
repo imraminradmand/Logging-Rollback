@@ -153,7 +153,7 @@ def transaction_block(id: str, money: int, faliure: bool):
     print_log()
 
     # Clear log
-    # TODO clear log - crashing for some reason
+    current_block_log = {}
 
 
 """
@@ -197,6 +197,10 @@ def auto_rollback():
 
 
 def print_log():
+
+    if len(log_list) == 0:
+        print("Log Sub-system is empty.")
+
     for log in log_list:
         color_print_log("Transaction ID:", "orange_1", log['transaction_id'])
         color_print_log("Attribute:", "orange_1", log['attribute'])
