@@ -1,7 +1,6 @@
 import datetime
 import os
 
-import pandas as pd
 from constant import ID
 from df_helpers import instantiate_dataframes, print_dataframes
 from helpers import color_print, color_print_log
