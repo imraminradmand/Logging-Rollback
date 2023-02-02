@@ -145,7 +145,16 @@ def transaction_block(id: str, money: int, faliure: bool):
     print_log()
 
     # Clear log
-    current_block_log = {}
+    current_block_log = {
+        "status": "",
+        "transaction_id": "",
+        "attribute": "",
+        "table": "",
+        "image_before": {},
+        "image_after": {},
+        "timestamp": "",
+        "user": "",
+    }
 
 
 """
