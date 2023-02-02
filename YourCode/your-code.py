@@ -26,6 +26,7 @@ def transaction_block(id: str, money: int, faliure: bool):
         "attribute": "",
         "table": "",
         "image_before": {},
+        "image_after": {},
         "timestamp": "",
         "user": "",
     }
@@ -50,7 +51,6 @@ def transaction_block(id: str, money: int, faliure: bool):
 
     # Log the data onto the current block log
     # * BEFORE THE TRANSACTION
-    current_block_log["status"] = "Before Transaction"
     current_block_log["transaction_id"] = transaction_id
     current_block_log["attribute"] = "Balance"
     current_block_log["table"] = "account-balance"
@@ -85,13 +85,9 @@ def transaction_block(id: str, money: int, faliure: bool):
 
         # Log the data onto the current block log
         # * ERROR DURING TRANSACTION
+
         current_block_log["status"] = "Failure"
-        current_block_log["transaction_id"] = transaction_id
-        current_block_log["attribute"] = "Balance"
-        current_block_log["table"] = "account-balance"
-        current_block_log["image_before"] = df_account_balances
-        current_block_log["timestamp"] = timestamp
-        current_block_log["user"] = f"{first_name} {last_name}"
+        current_block_log["image_after"] = df_account_balances
 
         # Append the current block log to the log sub-system
         log_list.append(current_block_log)
@@ -118,12 +114,7 @@ def transaction_block(id: str, money: int, faliure: bool):
     # Log the data onto the current block log
     # * AFTER THE TRANSACTION
     current_block_log["status"] = "Success"
-    current_block_log["transaction_id"] = transaction_id
-    current_block_log["attribute"] = "Balance"
-    current_block_log["table"] = "account-balance"
-    current_block_log["image_before"] = df_account_balances
-    current_block_log["timestamp"] = timestamp
-    current_block_log["user"] = f"{first_name} {last_name}"
+    current_block_log["image_after"] = df_account_balances
 
     # Append the current block log to the log sub-system
     log_list.append(current_block_log)
@@ -212,6 +203,8 @@ def print_log():
         color_print_log("Table:", "orange_1", log['table'])
         color_print("Image Before:", "orange_1")
         print(log['image_before'])
+        color_print("Image After:", "orange_1")
+        print(log['image_after'])
         color_print_log("Timestamp:", "orange_1", log['timestamp'])
         color_print_log("User:", "orange_1", log['user'])
 
@@ -228,8 +221,8 @@ def main():
     color_print("BLOCK TRANSACTION 1", 'green')
     transaction_block(ID, 100000, False)
 
-    color_print("BLOCK TRANSACTION 2", 'green')
-    transaction_block(ID, 100000, True)
+    # color_print("BLOCK TRANSACTION 2", 'green')
+    # transaction_block(ID, 100000, True)
 
 
 if __name__ == "__main__":
