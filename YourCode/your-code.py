@@ -2,7 +2,6 @@ import datetime
 import os
 
 import pandas as pd
-from colored import attr, fg
 from constant import ID
 from df_helpers import instantiate_dataframes, print_dataframes
 from helpers import color_print, color_print_log
@@ -49,12 +48,14 @@ def transaction_block(id: str, money: int, faliure: bool):
     from_account_balance = df_account_balances.loc[from_account, 'Balance']
     to_account_balance = df_account_balances.loc[to_account, 'Balance']
 
+    df_temp = df_account_balances.copy()
+
     # Log the data onto the current block log
     # * BEFORE THE TRANSACTION
     current_block_log["transaction_id"] = transaction_id
     current_block_log["attribute"] = "Balance"
     current_block_log["table"] = "account-balance"
-    current_block_log["image_before"] = df_account_balances
+    current_block_log["image_before"] = df_temp
     current_block_log["timestamp"] = timestamp
     current_block_log["user"] = f"{first_name} {last_name}"
 
@@ -199,6 +200,7 @@ def print_log():
 
     for log in log_list:
         color_print_log("Transaction ID:", "orange_1", log['transaction_id'])
+        color_print_log("Status:", "orange_1", log['status'])
         color_print_log("Attribute:", "orange_1", log['attribute'])
         color_print_log("Table:", "orange_1", log['table'])
         color_print("Image Before:", "orange_1")
@@ -221,8 +223,8 @@ def main():
     color_print("BLOCK TRANSACTION 1", 'green')
     transaction_block(ID, 100000, False)
 
-    # color_print("BLOCK TRANSACTION 2", 'green')
-    # transaction_block(ID, 100000, True)
+    color_print("BLOCK TRANSACTION 2", 'green')
+    transaction_block(ID, 100000, True)
 
 
 if __name__ == "__main__":
