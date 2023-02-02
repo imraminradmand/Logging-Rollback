@@ -97,7 +97,7 @@ def transaction_block(id: str, money: int, faliure: bool):
         print_log()
 
         # TODO Auto rollback
-        # auto_rollback()
+        auto_rollback()
 
         # Reset the current block log
         current_block_log = {}
@@ -188,10 +188,8 @@ def auto_rollback():
 
     # Getting the last log
     log = log_list[-1]
-
-    # Getting before image from the log and converting to df
-    previous_image = pd.DataFrame(log["image_before"])
-    previous_image.set_index('Account Number', inplace=True)
+    
+    previous_image = log["image_before"]
 
     # Commiting the fix
     previous_image.to_csv(
