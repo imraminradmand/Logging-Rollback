@@ -94,6 +94,7 @@ def transaction_block(id: str, money: int, faliure: bool):
         log_list.append(current_block_log)
 
         # Print the log sub-system
+        color_print("Status of Log Sub-system:", "green")
         print_log()
 
         # TODO Auto rollback
@@ -157,38 +158,12 @@ def transaction_block(id: str, money: int, faliure: bool):
     }
 
 
-"""
-AUTO ROLLBACK + LOG STRUCTURE
-
-initial (before anything happens) logs = []
-
-in trans. 1 =>
-trans1current_block_log = [id, table, attr, imgB, imgA, completed, timestamp, userID]
-
-after trans.1 =>
-add trans1current_block_log to logs
-logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
-
-before trans.2 start =>
-logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID] ]
-
-during trans. 2 =>
-trans2current_block_log = [id2, table, attr, imgB, imgA, failed, timestamp, userID]
-
-after trans2 =>
-logs = [ [id, table, attr, imgB, imgA, status, timestamp, userID],  [id2, table, attr, imgB, imgA, failed, timestamp, userID] ]
-
-look inside log for list that has status set to failed, grab that log, and then grab the before image from that log and use it for auto rollback
-
-"""
-
-
 def auto_rollback():
+    ''' If a transaaction fails, the tables are updated to their last healthy state'''
     color_print("AUTO ROLLBACK INITIATED", "purple_1b")
 
     # Getting the last log
     log = log_list[-1]
-    
     previous_image = log["image_before"]
 
     # Commiting the fix
@@ -197,7 +172,7 @@ def auto_rollback():
 
     color_print("AUTO ROLLBACK COMPLETED", "purple_1b")
 
-    color_print_log("DB STATE AFTER ROLLBACK", "purple_1b", previous_image)
+    color_print_log("DB STATE AFTER ROLLBACK \n", "purple_1b", previous_image)
 
 
 def print_log():
@@ -216,6 +191,7 @@ def print_log():
         print(log['image_after'])
         color_print_log("Timestamp:", "orange_1", log['timestamp'])
         color_print_log("User:", "orange_1", log['user'])
+        print("-" * 50)
 
 
 def main():
