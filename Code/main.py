@@ -96,7 +96,7 @@ def transaction_block(id: str, money: int, faliure: bool):
         color_print("Status of Log Sub-system:", "green")
         print_log()
 
-        # TODO Auto rollback
+        # Trigger a rollback after a failure
         auto_rollback()
 
         # Reset the current block log
