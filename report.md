@@ -15,8 +15,8 @@ Report: it should include your main "design decisions", like data structures, da
 This script implements a financial transaction block that moves money from a checking account to a savings account for a given customer. It performs the following steps:
 
 1. Instantiates three dataframes for customers, accounts and account balances.
-2. Calls the function transaction_block with the input parameters of customer ID, amount of money, and a flag indicating whether the transaction should fail.
-3. Within the transaction_block, it performs the following:
+2. Calls the function `transaction_block` with the input parameters of customer ID, amount of money, and a flag indicating whether the transaction should fail.
+3. Within the `transaction_block`, it performs the following:
    1. Calculates a transaction ID based on the current date and time.
    2. Retrieves the customer's information, account numbers, and account balances.
    3. Subtracts the money from the checking account and adds it to the savings account.
