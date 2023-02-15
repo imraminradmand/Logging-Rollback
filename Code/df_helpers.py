@@ -4,7 +4,7 @@ from helpers import myreader
 
 
 def instantiate_dataframes():
-    """ Populate Dataframes with data from csv files (../Data-Assignment-1/csv/) """
+    """ Populate Dataframes with data from csv files (../Data-Assignment-1/) """
 
     customers = {
         "ID": [],
@@ -29,10 +29,10 @@ def instantiate_dataframes():
     }
 
     # Create a list for each csv file
-    customer_list = myreader('../Data-Assignment-1/csv/customer.csv')
-    account_list = myreader('../Data-Assignment-1/csv/account.csv')
+    customer_list = myreader('../Data-Assignment-1/customer.csv')
+    account_list = myreader('../Data-Assignment-1/account.csv')
     account_balance_list = myreader(
-        '../Data-Assignment-1/csv/account-balance.csv')
+        '../Data-Assignment-1/account-balance.csv')
 
     # Appending the lists to the Dataframes
     for line in customer_list:

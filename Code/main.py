@@ -79,7 +79,7 @@ def transaction_block(id: str, money: int, faliure: bool):
     if (faliure == True):
         # Commit removal of money from the checking account
         df_account_balances.to_csv(
-            '../Data-Assignment-1/csv/account-balance.csv', header=False)
+            '../Data-Assignment-1/account-balance.csv', header=False)
 
         color_print("Failure Detected", "red")
 
@@ -124,7 +124,7 @@ def transaction_block(id: str, money: int, faliure: bool):
     color_print("COMMIT all your changes", "green")
 
     df_account_balances.to_csv(
-        '../Data-Assignment-1/csv/account-balance.csv', header=False)
+        '../Data-Assignment-1/account-balance.csv', header=False)
 
     print("Changes committed to account-balance.csv")
 
@@ -167,7 +167,7 @@ def auto_rollback():
 
     # Commiting the fix
     previous_image.to_csv(
-        '../Data-Assignment-1/csv/account-balance.csv', header=False)
+        '../Data-Assignment-1/account-balance.csv', header=False)
 
     color_print("AUTO ROLLBACK COMPLETED", "purple_1b")
 
